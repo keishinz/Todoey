@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
@@ -15,8 +15,9 @@ class CategoryViewController: UITableViewController {
     //MARK: - Constants and Variables
     //**************************************************//
     
-    var categories = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    //let realm = try! Realm()
+    let realm = try! Realm()
+    var categories: Results<Category>?
 
     //**************************************************//
     //MARK: - View Life Circles
@@ -25,8 +26,6 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         loadCategory()
     }
     
@@ -37,15 +36,16 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        let category = categories[indexPath.row]
+        let category = categories?[indexPath.row]
         
-        cell.textLabel?.text = category.name
+        cell.textLabel?.text = category?.name ?? "No category added yet."
         cell.accessoryType = .disclosureIndicator
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        
+        return categories?.count ?? 1
     }
     
     //**************************************************//
@@ -53,13 +53,15 @@ class CategoryViewController: UITableViewController {
     //**************************************************//
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         performSegue(withIdentifier: "goToItems", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         let destinationVC = segue.destination as! TodoListViewController
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categories[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
 
@@ -69,21 +71,20 @@ class CategoryViewController: UITableViewController {
     
     func loadCategory() {
         
-        let request: NSFetchRequest<Category> = Category.fetchRequest()
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print("ERROR loading context, \(error)")
-        }
+        categories = realm.objects(Category.self)
+        tableView.reloadData()
     }
     
-    func saveCategory() {
+    func save(category: Category) {
         
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print("Error saving context, \(error)")
         }
+        tableView.reloadData()
     }
     
     //**************************************************//
@@ -96,17 +97,15 @@ class CategoryViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = category.text!
-                        
-            self.categories.append(newCategory)
-            self.saveCategory()
-            self.tableView.reloadData()
+            
+            self.save(category: newCategory)
         }
         
         alert.addTextField { (alertTextField) in
             
-            alertTextField.placeholder = "Creat new category."
+            category.placeholder = "Creat new category."
             category = alertTextField
         }
         alert.addAction(action)

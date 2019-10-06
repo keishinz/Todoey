@@ -95,18 +95,21 @@ class CategoryViewController: UITableViewController {
         
         var category = UITextField()
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
-            
-            let newCategory = Category()
-            newCategory.name = category.text!
-            
-            self.save(category: newCategory)
-        }
-        
         alert.addTextField { (alertTextField) in
             
-            category.placeholder = "Creat new category."
+            alertTextField.placeholder = "Creat new category."
             category = alertTextField
+        }
+        
+        let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
+            
+            if category.text!.isEmpty {
+//                category.placeholder = "Please enter a category."
+            } else {
+                let newCategory = Category()
+                newCategory.name = category.text!
+                self.save(category: newCategory)
+            }
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)

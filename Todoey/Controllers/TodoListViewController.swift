@@ -21,7 +21,6 @@ class TodoListViewController: UITableViewController {
     var selectedCategory: Category? {
         didSet {
             loadItems()
-            tableView.reloadData()
         }
     }
 
@@ -92,30 +91,33 @@ class TodoListViewController: UITableViewController {
         
         var todoItem = UITextField()
         let alert = UIAlertController(title: "Add New Todo Item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            
-            if let currentCategory = self.selectedCategory {
-                do {
-                    try self.realm.write {
-                        let newItem = Item()
-                        newItem.title = todoItem.text!
-                        print("\(newItem.title) is created at \(newItem.createdTime)")
-                        currentCategory.items.append(newItem)
-                    }
-                } catch {
-                    print("Error saving new item, \(error)")
-                }
-            }
-            
-            self.tableView.reloadData()
-        }
-        
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Creat new item."
-            //if alertTextField.text != nil {
-                todoItem = alertTextField
-            //}
+            todoItem = alertTextField
         }
+
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            
+            if todoItem.text!.isEmpty {
+                //do nothing
+            } else {
+                if let currentCategory = self.selectedCategory {
+                    do {
+                        try self.realm.write {
+                            let newItem = Item()
+                            newItem.title = todoItem.text!
+                            print("\(newItem.title) is created at \(newItem.createdTime)")
+                            currentCategory.items.append(newItem)
+                        }
+                    } catch {
+                        print("Error saving new item, \(error)")
+                    }
+                }
+                self.tableView.reloadData()
+            }
+            
+        }
+        
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
@@ -125,6 +127,7 @@ class TodoListViewController: UITableViewController {
     /******************************************************************/
     
     func loadItems() {
+        
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }

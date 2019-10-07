@@ -83,6 +83,19 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            do {
+                try realm.write {
+                    realm.delete(todoItems![indexPath.row])
+                }
+            } catch {
+                print ("ERROR deleting category, \(error)")
+            }
+            loadItems()
+        }
+    }
+    
     /******************************************************************/
     //MARK: - Add new Items with bar button
     /******************************************************************/
@@ -98,24 +111,19 @@ class TodoListViewController: UITableViewController {
 
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
-            if todoItem.text!.isEmpty {
-                //do nothing
-            } else {
-                if let currentCategory = self.selectedCategory {
-                    do {
-                        try self.realm.write {
-                            let newItem = Item()
-                            newItem.title = todoItem.text!
-                            print("\(newItem.title) is created at \(newItem.createdTime)")
-                            currentCategory.items.append(newItem)
-                        }
-                    } catch {
-                        print("Error saving new item, \(error)")
+            if let str = todoItem.text, !str.isEmpty, let currentCategory = self.selectedCategory {
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = str
+                        print("\(newItem.title) is created at \(newItem.createdTime)")
+                        currentCategory.items.append(newItem)
                     }
+                } catch {
+                    print("Error saving new item, \(error)")
                 }
                 self.tableView.reloadData()
             }
-            
         }
         
         alert.addAction(action)

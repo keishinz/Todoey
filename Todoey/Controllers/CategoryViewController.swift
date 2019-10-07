@@ -15,7 +15,6 @@ class CategoryViewController: UITableViewController {
     //MARK: - Constants and Variables
     //**************************************************//
     
-    //let realm = try! Realm()
     let realm = try! Realm()
     var categories: Results<Category>?
 
@@ -39,7 +38,14 @@ class CategoryViewController: UITableViewController {
         let category = categories?[indexPath.row]
         
         cell.textLabel?.text = category?.name ?? "No category added yet."
-        cell.accessoryType = .disclosureIndicator
+//        if categories!.count == 0 {
+//            cell.textLabel?.text = "No category added yet."
+//            print("categories.isEmpty.")
+//        } else {
+//            cell.textLabel?.text = category?.name
+//            print("categories.isNotEmpty.")
+//            cell.accessoryType = .disclosureIndicator
+//        }
         return cell
     }
     
@@ -62,6 +68,19 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         if let indexPath = tableView.indexPathForSelectedRow {
             destinationVC.selectedCategory = categories?[indexPath.row]
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            do {
+                try realm.write {
+                    realm.delete(categories![indexPath.row])
+                }
+            } catch {
+                print ("ERROR deleting category, \(error)")
+            }
+            loadCategory()
         }
     }
 
@@ -103,9 +122,7 @@ class CategoryViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             
-            if category.text!.isEmpty {
-//                category.placeholder = "Please enter a category."
-            } else {
+            if let str = category.text, !str.isEmpty {
                 let newCategory = Category()
                 newCategory.name = category.text!
                 self.save(category: newCategory)

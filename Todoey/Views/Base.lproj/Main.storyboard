@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Category View Controller-->
+        <!--Todoey-->
         <scene sceneID="ock-0L-rlz">
             <objects>
                 <tableViewController id="z3d-3a-lPz" customClass="CategoryViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
@@ -29,9 +29,8 @@
                             <outlet property="delegate" destination="z3d-3a-lPz" id="V6x-p1-tUA"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="M5Y-ne-Kcp">
+                    <navigationItem key="navigationItem" title="Todoey" id="M5Y-ne-Kcp">
                         <barButtonItem key="rightBarButtonItem" image="plus.rectangle" catalog="system" id="H2Q-iK-v67">
-                            <color key="tintColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="addCategoryButton:" destination="z3d-3a-lPz" id="6zK-dN-JTA"/>
                             </connections>
@@ -45,7 +44,7 @@
             </objects>
             <point key="canvasLocation" x="687" y="100"/>
         </scene>
-        <!--Todoey-->
+        <!--Item-->
         <scene sceneID="PY1-ei-Ngj">
             <objects>
                 <tableViewController id="nMe-E6-TEV" customClass="TodoListViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
@@ -73,9 +72,8 @@
                             <outlet property="delegate" destination="nMe-E6-TEV" id="Ixc-c7-OkF"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Todoey" id="zu5-ej-zIq">
+                    <navigationItem key="navigationItem" title="Item" id="zu5-ej-zIq">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="q5k-31-gc3">
-                            <color key="tintColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="nMe-E6-TEV" id="PxX-DV-ERp"/>
                             </connections>
@@ -94,13 +92,9 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="4Uu-cj-RVS" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="7Ur-qc-lUr">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="7Ur-qc-lUr">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <textAttributes key="titleTextAttributes">
-                            <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
